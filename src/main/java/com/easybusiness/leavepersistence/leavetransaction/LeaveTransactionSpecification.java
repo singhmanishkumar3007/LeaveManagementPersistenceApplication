@@ -68,9 +68,33 @@ public final class LeaveTransactionSpecification {
 			leaveEndDate);
 		predicates.add(datePredicate);
 
-		final Predicate statusPredicate = cb.notEqual(root.get(LeaveTransaction_.status),
+		/*final Predicate statusPredicate = cb.notEqual(root.get(LeaveTransaction_.status),
 			CANCELED_LEAVE_STATUS);
-		predicates.add(statusPredicate);
+		predicates.add(statusPredicate);*/
+
+		return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+	    }
+	};
+
+    }
+
+    public static Specification<LeaveTransaction> getLeaveTransactionsByUserAndLeaveDatesForAllKindOfLeaves(User user,
+	    Date leaveStartDate, Date leaveEndDate) {
+	return new Specification<LeaveTransaction>() {
+
+	    @Override
+	    public Predicate toPredicate(Root<LeaveTransaction> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+		final Collection<Predicate> predicates = new ArrayList<>();
+		final Predicate userPredicate = root.join(LeaveTransaction_.user).get(User_.id).in(user.getId());
+		predicates.add(userPredicate);
+
+		final Predicate datePredicate = cb.between(root.get(LeaveTransaction_.leaveStartDate), leaveStartDate,
+			leaveEndDate);
+		predicates.add(datePredicate);
+
+		/*final Predicate statusPredicate = cb.notEqual(root.get(LeaveTransaction_.status),
+			CANCELED_LEAVE_STATUS);
+		predicates.add(statusPredicate);*/
 
 		return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 	    }

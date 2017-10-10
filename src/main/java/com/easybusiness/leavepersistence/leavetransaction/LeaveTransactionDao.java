@@ -99,6 +99,18 @@ public class LeaveTransactionDao {
 		.size();
     }
 
+    public List<LeaveTransaction> findLeaveTransactionByUserIAndLeaveDate(Long userId, Date leaveStartDate,
+	    Date leaveEndDate) {
+
+	java.util.Date fromDate = truncate(leaveStartDate, Calendar.DAY_OF_MONTH);
+	Date toDate = new Date(ceiling(leaveEndDate, Calendar.DAY_OF_MONTH).getTime() - 1);
+	java.sql.Date sqlFromDate = new java.sql.Date(fromDate.getTime());
+	java.sql.Date sqlToDate = new java.sql.Date(toDate.getTime());
+	return leaveTransactionRepository
+		.findAll(LeaveTransactionSpecification.getLeaveTransactionsByUserAndLeaveDatesForAllKindOfLeaves(
+			userDao.findUserById(userId), sqlFromDate, sqlToDate));
+    }
+
     public List<LeaveTransaction> findAll() {
 	return leaveTransactionRepository.findAll();
     }
